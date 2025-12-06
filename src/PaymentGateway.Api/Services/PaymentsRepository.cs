@@ -4,6 +4,7 @@ namespace PaymentGateway.Api.Services;
 
 public class PaymentsRepository
 {
+    //Create interface
     public List<PostPaymentResponse> Payments = new();
     
     public void Add(PostPaymentResponse payment)
