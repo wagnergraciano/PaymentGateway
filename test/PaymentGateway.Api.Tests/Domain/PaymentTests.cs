@@ -1,4 +1,5 @@
 using PaymentGateway.Api.Domain;
+using PaymentGateway.Api.Models;
 
 namespace PaymentGateway.Api.Tests.Domain;
 
@@ -26,6 +27,7 @@ public class PaymentTests
         Assert.Equal(currency, payment.Currency.Value);
         Assert.Equal(amount, payment.Amount.Value);
         Assert.Equal(cvv, payment.Cvv.Value);
+        Assert.Equal(PaymentStatus.Created, payment.Status);
     }
 
     [Fact]
