@@ -7,7 +7,7 @@ public class ExpiryDate
 
     public ExpiryDate(int month, int year)
     {
-        if (this.IsValidMonth(month))
+        if (!this.IsValidMonth(month))
         {
             throw new ArgumentException("Expiry month must be between 1 and 12.");
         }
