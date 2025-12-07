@@ -1,6 +1,0 @@
-namespace PaymentGateway.Api.Services.PaymentProcessor;
-
-public interface IExternalPaymentProcessor
-{
-    async void ProcessPaymentAsync(Payment payment, CancellationToken cancellationToken);
-}
