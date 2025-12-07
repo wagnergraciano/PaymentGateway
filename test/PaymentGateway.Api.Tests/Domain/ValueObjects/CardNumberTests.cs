@@ -37,4 +37,19 @@ public class CardNumberTests
     {
         Assert.Throws<ArgumentException>(() => new CardNumber(invalidCardNumber));
     }
+
+    [Theory]
+    [InlineData("12345678901234", "1234")] // 14 digits
+    [InlineData("1234567890123456789", "6789")] // 19 digits
+    public void GetMaskedNumber_ShouldReturnLastFourDigits(string cardNumber, string expectedMasked)
+    {
+        // Arrange
+        var card = new CardNumber(cardNumber);
+
+        // Act
+        var maskedNumber = card.GetMaskedNumber();
+
+        // Assert
+        Assert.Equal(expectedMasked, maskedNumber);
+    }
 }

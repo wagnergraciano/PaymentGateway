@@ -15,4 +15,11 @@ public class CardNumber
 
         Value = long.Parse(value);
     }
+
+    public string GetMaskedNumber()
+    {
+        string numberStr = Value.ToString();
+        string lastFour = numberStr.Substring(numberStr.Length - 4);        
+        return lastFour;
+    }
 }

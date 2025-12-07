@@ -31,4 +31,9 @@ public class Payment
     {
         Status = isPaymentProcessed ? PaymentStatus.Authorized : PaymentStatus.Declined;
     }
+
+    public string GetMaskedCardNumber()
+    {
+        return CardNumber.GetMaskedNumber();
+    }
 }
