@@ -26,4 +26,9 @@ public class Payment
         Cvv = new CVV(cvv);
         Status = PaymentStatus.Created;
     }
+
+    public void UpdateStatus(bool isPaymentProcessed)
+    {
+        Status = isPaymentProcessed ? PaymentStatus.Authorized : PaymentStatus.Declined;
+    }
 }

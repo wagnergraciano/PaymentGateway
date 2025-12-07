@@ -4,5 +4,5 @@ namespace PaymentGateway.Api.Services.PaymentsProcessor;
 
 public interface IPaymentsProcessor
 {
-    Task ProcessPaymentAsync(Payment payment, CancellationToken cancellationToken);
+    Task<bool> ProcessPaymentAsync(Payment payment, CancellationToken cancellationToken);
 }

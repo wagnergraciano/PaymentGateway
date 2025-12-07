@@ -44,4 +44,60 @@ public class PaymentTests
         // Act & Assert
         Assert.Throws<ArgumentException>(() => new Payment(cardNumber, expiryMonth, expiryYear, currency, amount, invalidCVV));
     }
+
+    [Fact]
+    public void Constructor_ShouldSetDefaultStatusToCreated()
+    {
+        // Arrange
+        long cardNumber = 12345678901234;
+        int expiryMonth = 12;
+        int expiryYear = 2030;
+        string currency = "USD";
+        int amount = 1000;
+        string cvv = "123";
+
+        // Act
+        Payment payment = new Payment(cardNumber, expiryMonth, expiryYear, currency, amount, cvv);
+
+        // Assert
+        Assert.Equal(PaymentStatus.Created, payment.Status);
+    }
+
+    [Fact]
+    public void UpdateStatus_ShouldUpdateStatusToProcessed_WhenCalledWithTrue()
+    {
+        // Arrange
+        long cardNumber = 12345678901234;
+        int expiryMonth = 12;
+        int expiryYear = 2030;
+        string currency = "USD";
+        int amount = 1000;
+        string cvv = "123";
+        Payment payment = new Payment(cardNumber, expiryMonth, expiryYear, currency, amount, cvv);
+
+        // Act
+        payment.UpdateStatus(true);
+
+        // Assert
+        Assert.Equal(PaymentStatus.Authorized, payment.Status);
+    }
+
+    [Fact]
+    public void UpdsateStatus_ShouldUpdateStatusToDeclined_WhenCalledWithFalse()
+    {
+        // Arrange
+        long cardNumber = 12345678901234;
+        int expiryMonth = 12;
+        int expiryYear = 2030;
+        string currency = "USD";
+        int amount = 1000;
+        string cvv = "123";
+        Payment payment = new Payment(cardNumber, expiryMonth, expiryYear, currency, amount, cvv);
+
+        // Act
+        payment.UpdateStatus(false);
+
+        // Assert
+        Assert.Equal(PaymentStatus.Declined, payment.Status);
+    }
 }

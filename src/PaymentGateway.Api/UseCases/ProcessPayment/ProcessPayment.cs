@@ -1,14 +1,16 @@
 using MediatR;
 using PaymentGateway.Api.Domain;
+using PaymentGateway.Api.Services.PaymentsProcessor;
+using PaymentGateway.Api.Services.PaymentsRepository;
 
 namespace PaymentGateway.Api.UseCases.ProcessPayment;
 
 public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentRequest, ProcessPaymentResponse>
 {
     private readonly IPaymentsRepository _repository;
-    private readonly IExternalPaymentProcessor _paymentProcessor;
+    private readonly IPaymentsProcessor _paymentProcessor;
 
-    public ProcessPaymentHandler(IPaymentsRepository repository, IExternalPaymentProcessor paymentProcessor)
+    public ProcessPaymentHandler(IPaymentsRepository repository, IPaymentsProcessor paymentProcessor)
     {
         _repository = repository;
         _paymentProcessor = paymentProcessor;
@@ -16,7 +18,8 @@ public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentRequest, Proc
 
     public async Task<ProcessPaymentResponse> Handle(ProcessPaymentRequest request, CancellationToken cancellationToken)
     {
-        var payment = new Payment(
+        //Try catch
+        Payment payment = new Payment(
             request.CardNumber,
             request.ExpiryMonth,
             request.ExpiryYear,
@@ -24,15 +27,11 @@ public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentRequest, Proc
             request.Amount,
             request.Cvv
         );
+        
+        bool isPaymentProcessed = await _paymentProcessor.ProcessPaymentAsync(payment, cancellationToken);
+        payment.UpdateStatus(isPaymentProcessed);        
+        await _repository.AddPaymentAsync(payment, cancellationToken);
 
-        // Call external payment processor
-        var processorResponse = await _paymentProcessor.ProcessPaymentAsync(payment);
-        payment.UpdateStatus(processorResponse.Status);
-
-        // Save payment in database
-        await _repository.SavePaymentAsync(payment);
-
-        // Return response
         return new ProcessPaymentResponse
         {
             Id = payment.Id,
