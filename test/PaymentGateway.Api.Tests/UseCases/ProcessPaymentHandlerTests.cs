@@ -63,4 +63,22 @@ public class ProcessPaymentHandlerTests
         Assert.Equal(paymentRequest.Currency, savedPayment.Currency.Value);
         Assert.Equal(paymentRequest.Amount, savedPayment.Amount.Value);
     }
+
+    [Fact]
+    public async Task Handle_ShouldThrow_WhenProcessorResquestAsInvalidParams()
+    {
+        // Arrange
+        var paymentRequest = new ProcessPaymentRequest(
+            "123456", 12, 2030, "GBP", 1000, "123"
+        );
+
+        var mockRepository = new MockPaymentsRepository();
+        var mockProcessor = new MockPaymentsProcessor();
+
+        var handler = new ProcessPaymentHandler(mockRepository, mockProcessor);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(async () =>
+            await handler.Handle(paymentRequest, CancellationToken.None));
+    }
 }

@@ -18,7 +18,6 @@ public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentRequest, Proc
 
     public async Task<ProcessPaymentResponse> Handle(ProcessPaymentRequest request, CancellationToken cancellationToken)
     {          
-        //Try catch
         Payment payment = new Payment(
             request.CardNumber,
             request.ExpiryMonth,
