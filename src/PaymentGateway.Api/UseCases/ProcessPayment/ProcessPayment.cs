@@ -27,9 +27,10 @@ public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentRequest, Proc
             request.Cvv
         );
         
-        bool isPaymentProcessed = await _paymentProcessor.ProcessPaymentAsync(payment, cancellationToken);
-        payment.UpdateStatus(isPaymentProcessed);        
         await _repository.AddPaymentAsync(payment, cancellationToken);
+        bool isPaymentProcessed = await _paymentProcessor.ProcessPaymentAsync(payment, cancellationToken);
+        payment.UpdateStatus(isPaymentProcessed);
+        await _repository.UpdatePaymentAsync(payment, cancellationToken);
 
         return new ProcessPaymentResponse
         {

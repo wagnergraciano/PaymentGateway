@@ -18,5 +18,16 @@ namespace PaymentGateway.Api.Tests.Mocks
             var payment = Payments.FirstOrDefault(p => p.Id == id);
             return Task.FromResult(payment);
         }
+
+        public Task UpdatePaymentAsync(Payment payment, CancellationToken cancellationToken)
+        {
+            var existingPayment = Payments.FirstOrDefault(p => p.Id == payment.Id);
+            if (existingPayment != null)
+            {
+                Payments.Remove(existingPayment);
+                Payments.Add(payment);
+            }
+            return Task.CompletedTask;
+        }
     }
 }
