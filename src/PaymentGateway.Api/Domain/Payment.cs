@@ -13,7 +13,10 @@ public class Payment
     public CVV Cvv { get; }
     public PaymentStatus Status { get; private set; }
 
-    public Payment(long cardNumber, int expiryMonth, int expiryYear, string currency, int amount, string cvv)
+    public Payment(long cardNumber, int expiryMonth, int expiryYear, string currency, int amount, string cvv) 
+        : this(cardNumber.ToString(), expiryMonth, expiryYear, currency, amount, cvv){}
+        
+    public Payment(string cardNumber, int expiryMonth, int expiryYear, string currency, int amount, string cvv)
     {
         Id = Guid.NewGuid();
         CardNumber = new CardNumber(cardNumber);
