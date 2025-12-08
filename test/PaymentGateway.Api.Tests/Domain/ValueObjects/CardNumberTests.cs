@@ -13,9 +13,9 @@ public class CardNumberTests
     }
 
     [Theory]
-    [InlineData(123)] // Less than 14 digits
-    [InlineData(12345678901234567890)] // More than 19 digits
-    public void Constructor_ShouldThrowArgumentException_WhenInvalidLong(long invalidCardNumber)
+    [InlineData("123")] // Less than 14 digits
+    [InlineData("12345678901234567890")] // More than 19 digits
+    public void Constructor_ShouldThrowArgumentException_WhenInvalidLong(string invalidCardNumber)
     {
         Assert.Throws<ArgumentException>(() => new CardNumber(invalidCardNumber));
     }
