@@ -1,6 +1,4 @@
 using System.Net;
-using System.Net.Http.Json;
-using Microsoft.Extensions.Logging;
 using PaymentGateway.Api.Domain;
 
 namespace PaymentGateway.Api.Services.PaymentsProcessor;
