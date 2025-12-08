@@ -35,7 +35,12 @@ public class ProcessPaymentHandler : IRequestHandler<ProcessPaymentRequest, Proc
         return new ProcessPaymentResponse
         {
             Id = payment.Id,
-            Status = payment.Status
+            Status = payment.Status,
+            CardNumberLastFour = payment.GetMaskedCardNumber(),
+            ExpiryMonth = payment.ExpiryDate.Month,
+            ExpiryYear = payment.ExpiryDate.Year,
+            Currency = payment.Currency.Value,
+            Amount = payment.Amount.Value
         };
     }
 }
