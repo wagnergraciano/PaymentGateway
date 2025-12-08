@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+
+using Microsoft.AspNetCore.Mvc;
 
 using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
@@ -15,21 +17,22 @@ public class PaymentsController : Controller
 {
     private readonly IPaymentsRepository _paymentsRepository;
     private readonly IPaymentsProcessor _paymentsProcessor;
+    private readonly IMediator _mediator;
 
-    public PaymentsController(IPaymentsRepository paymentsRepository, IPaymentsProcessor paymentsProcessor)
+    public PaymentsController(IPaymentsRepository paymentsRepository, IPaymentsProcessor paymentsProcessor, IMediator mediator)
     {
         _paymentsRepository = paymentsRepository;
         _paymentsProcessor = paymentsProcessor;
+        _mediator = mediator;
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<GetPaymentResponse>> GetPaymentAsync(Guid id)
     {
         var request = new GetPaymentRequest(id);
-        var handler = new GetPaymentHandler(_paymentsRepository);
         try{
 
-            GetPaymentResponse paymentResponse = await handler.Handle(request, CancellationToken.None);
+            GetPaymentResponse paymentResponse = await _mediator.Send(request);
             return new OkObjectResult(paymentResponse);
         }
         catch (KeyNotFoundException)
@@ -53,7 +56,7 @@ public class PaymentsController : Controller
         ProcessPaymentResponse response;
         try
         {
-            response = await handler.Handle(processPaymentRequest, CancellationToken.None);
+            response = await _mediator.Send(processPaymentRequest);
             return new OkObjectResult(response);
         }
         catch
