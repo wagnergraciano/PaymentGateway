@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IPaymentsRepository, PaymentsRepository>();
 builder.Services.AddSingleton<IPaymentsProcessor, PaymentsProcessor>();
+builder.Services.AddHttpClient<IPaymentsProcessor, PaymentsProcessor>();
 
 var app = builder.Build();
 
