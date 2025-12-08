@@ -21,6 +21,11 @@ public class ExpiryDate
         Year = year;
     }
 
+    public string GetFormattedExpiryDate()
+    {
+        return $"{Month:D2}/{Year}";
+    }
+
     private bool IsValidMonth(int month)
     {
         return month >= 1 && month <= 12;

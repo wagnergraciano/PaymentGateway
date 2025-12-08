@@ -36,4 +36,9 @@ public class Payment
     {
         return CardNumber.GetMaskedNumber();
     }
+
+    public string GetFormattedExpiryDate()
+    {
+        return ExpiryDate.GetFormattedExpiryDate();
+    }
 }

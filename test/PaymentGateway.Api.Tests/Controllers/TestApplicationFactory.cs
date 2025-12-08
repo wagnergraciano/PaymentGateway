@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
+using PaymentGateway.Api.Services.PaymentsProcessor;
 using PaymentGateway.Api.Services.PaymentsRepository;
 using PaymentGateway.Api.Tests.Mocks;
 
@@ -13,15 +13,17 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            // Encontra e remove o serviço real
-            var descriptor = services.SingleOrDefault(
+            var descriptorRepository = services.SingleOrDefault(
                 d => d.ServiceType == typeof(IPaymentsRepository));
-
-            if (descriptor != null)
-                services.Remove(descriptor); // REMOVE o PaymentsRepository verdadeiro
-
-            // Adiciona o Mock
+            if (descriptorRepository != null)
+                services.Remove(descriptorRepository);
             services.AddSingleton<IPaymentsRepository, MockPaymentsRepository>();
+
+            var descriptorProcessor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(IPaymentsProcessor));
+            if (descriptorProcessor != null)
+                services.Remove(descriptorProcessor);
+            services.AddSingleton<IPaymentsProcessor, MockPaymentsProcessor>();
         });
     }
 }
