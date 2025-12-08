@@ -55,31 +55,36 @@ public class PaymentsProcessor : IPaymentsProcessor
             response.StatusCode
         );
 
-        if (response.StatusCode == HttpStatusCode.OK)
+        bool bankResponse = await HandleBankResponseAsync(response, cancellationToken);
+        return bankResponse;        
+    }
+
+    private async Task<bool> HandleBankResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    {
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            var result = await response.Content.ReadFromJsonAsync<BankResponse>(cancellationToken: cancellationToken);
-
-            if (result is null)
-            {
-                _logger.LogWarning("Bank simulator returned empty or invalid response.");
-                return false;
-            }
-
-            _logger.LogInformation(
-                "Bank response: Authorized={Authorized}, AuthCode={AuthCode}",
-                result.authorized,
-                result.authorization_code
+            _logger.LogWarning(
+                "Bank simulator returned a non-success status code: {StatusCode}",
+                response.StatusCode
             );
-
-            return result.authorized;
+            return false;
         }
 
-        _logger.LogWarning(
-            "Bank simulator returned a non-success status code: {StatusCode}",
-            response.StatusCode
+        var result = await response.Content.ReadFromJsonAsync<BankResponse>(cancellationToken: cancellationToken);
+
+        if (result is null)
+        {
+            _logger.LogWarning("Bank simulator returned empty or invalid response.");
+            return false;
+        }
+
+        _logger.LogInformation(
+            "Bank response: Authorized={Authorized}, AuthCode={AuthCode}",
+            result.authorized,
+            result.authorization_code
         );
 
-        return false;
+        return result.authorized;
     }
 
     private class BankResponse
