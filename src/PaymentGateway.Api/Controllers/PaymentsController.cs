@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
+using PaymentGateway.Api.Controllers.DTOs;
 using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.UseCases.GetPayment;
@@ -21,13 +22,14 @@ public class PaymentsController : Controller
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<GetPaymentResponse>> GetPaymentAsync(Guid id)
+    public async Task<ActionResult<GetPaymentResponseDto>> GetPaymentAsync(Guid id)
     {
         var request = new GetPaymentRequest(id);
         try{
 
             GetPaymentResponse paymentResponse = await _mediator.Send(request);
-            return new OkObjectResult(paymentResponse);
+            var responseDto = GetPaymentResponseDto.FromDomain(paymentResponse);
+            return new OkObjectResult(responseDto);
         }
         catch (KeyNotFoundException)
         {
@@ -36,9 +38,10 @@ public class PaymentsController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProcessPaymentResponse>> ProcessPaymentAsync(
+    public async Task<ActionResult<ProcessPaymentResponseDto>> ProcessPaymentAsync(
         [FromBody] PostPaymentRequest request)
     {
+        ProcessPaymentResponseDto responseDto;
         var processPaymentRequest = new ProcessPaymentRequest(
             request.CardNumber,
             request.ExpiryMonth,
@@ -46,20 +49,20 @@ public class PaymentsController : Controller
             request.Currency,
             request.Amount,
             request.Cvv);
-        ProcessPaymentResponse response;
         try
         {
-            response = await _mediator.Send(processPaymentRequest);
-            return new OkObjectResult(response);
+            ProcessPaymentResponse response = await _mediator.Send(processPaymentRequest);
+            responseDto = ProcessPaymentResponseDto.FromDomain(response);
         }
         catch
         {
-            response = new ProcessPaymentResponse
+            ProcessPaymentResponse response = new ProcessPaymentResponse
             {
                 Id = Guid.Empty,
                 Status = PaymentStatus.Rejected
             };
+            responseDto = ProcessPaymentResponseDto.FromDomain(response);
         }
-        return new OkObjectResult(response);
+        return new OkObjectResult(responseDto);
     }
 }

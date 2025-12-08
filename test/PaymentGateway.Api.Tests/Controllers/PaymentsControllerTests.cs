@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using PaymentGateway.Api.Controllers.DTOs;
 using PaymentGateway.Api.Domain;
 using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
@@ -31,7 +32,7 @@ public class PaymentsControllerTests
 
         // Act
         var response = await client.GetAsync($"/api/Payments/{payment.Id}");
-        var paymentResponse = await response.Content.ReadFromJsonAsync<GetPaymentResponse>();
+        var paymentResponse = await response.Content.ReadFromJsonAsync<GetPaymentResponseDto>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -68,13 +69,13 @@ public class PaymentsControllerTests
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", requestBody);
-        var result = await response.Content.ReadFromJsonAsync<ProcessPaymentResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ProcessPaymentResponseDto>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(result);
         Assert.NotEqual(Guid.Empty, result.Id);
-        Assert.Equal(PaymentStatus.Authorized, result.Status);
+        Assert.Equal(PaymentStatus.Authorized.ToString(), result.Status);
 
         var mockRepository = factory.Services.GetRequiredService<IPaymentsRepository>() 
                              as MockPaymentsRepository;
@@ -105,11 +106,11 @@ public class PaymentsControllerTests
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", requestBody);
-        var result = await response.Content.ReadFromJsonAsync<ProcessPaymentResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ProcessPaymentResponseDto>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(result);        
-        Assert.Equal(PaymentStatus.Declined, result.Status);
+        Assert.Equal(PaymentStatus.Declined.ToString(), result.Status);
     }
 }
