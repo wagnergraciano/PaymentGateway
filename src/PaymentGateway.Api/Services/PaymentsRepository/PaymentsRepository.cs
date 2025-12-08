@@ -1,19 +1,31 @@
-﻿using PaymentGateway.Api.Models.Responses;
+﻿using PaymentGateway.Api.Domain;
 
 namespace PaymentGateway.Api.Services.PaymentsRepository;
 
-public class PaymentsRepository
+public class PaymentsRepository : IPaymentsRepository
 {
-    //Create interface
-    public List<PostPaymentResponse> Payments = new();
-    
-    public void Add(PostPaymentResponse payment)
-    {
-        Payments.Add(payment);
-    }
+        public IList<Payment> Payments { get; private set; } = new List<Payment>();
 
-    public PostPaymentResponse Get(Guid id)
-    {
-        return Payments.FirstOrDefault(p => p.Id == id);
-    }
+        public Task AddPaymentAsync(Payment payment, CancellationToken cancellationToken)
+        {
+            Payments.Add(payment);
+            return Task.CompletedTask;
+        }
+
+        public Task<Payment> GetPaymentByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var payment = Payments.FirstOrDefault(p => p.Id == id);
+            return Task.FromResult(payment);
+        }
+
+        public Task UpdatePaymentAsync(Payment payment, CancellationToken cancellationToken)
+        {
+            var existingPayment = Payments.FirstOrDefault(p => p.Id == payment.Id);
+            if (existingPayment != null)
+            {
+                Payments.Remove(existingPayment);
+                Payments.Add(payment);
+            }
+            return Task.CompletedTask;
+        }
 }
