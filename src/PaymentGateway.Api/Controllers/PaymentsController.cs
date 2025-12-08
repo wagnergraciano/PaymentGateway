@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
-using PaymentGateway.Api.Services.PaymentsProcessor;
-using PaymentGateway.Api.Services.PaymentsRepository;
 using PaymentGateway.Api.UseCases.GetPayment;
 using PaymentGateway.Api.UseCases.ProcessPayment;
 
@@ -15,14 +13,10 @@ namespace PaymentGateway.Api.Controllers;
 [ApiController]
 public class PaymentsController : Controller
 {
-    private readonly IPaymentsRepository _paymentsRepository;
-    private readonly IPaymentsProcessor _paymentsProcessor;
     private readonly IMediator _mediator;
 
-    public PaymentsController(IPaymentsRepository paymentsRepository, IPaymentsProcessor paymentsProcessor, IMediator mediator)
+    public PaymentsController(IMediator mediator)
     {
-        _paymentsRepository = paymentsRepository;
-        _paymentsProcessor = paymentsProcessor;
         _mediator = mediator;
     }
 
@@ -52,7 +46,6 @@ public class PaymentsController : Controller
             request.Currency,
             request.Amount,
             request.Cvv);
-        var handler = new ProcessPaymentHandler(_paymentsRepository, _paymentsProcessor);
         ProcessPaymentResponse response;
         try
         {
